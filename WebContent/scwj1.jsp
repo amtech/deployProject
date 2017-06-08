@@ -122,43 +122,16 @@
     
 </script>
 </head>
-	
-	
-	
-	
-		</script>
-		
-	</head>
-	
-	<body>
+	</script>
+</head>
+<body>
 	<form style="padding-left:40%;"name="demo" action="doUpload.do" enctype="multipart/form-data" method="POST" >
-<div id="J_TabCase">
-	<input type="file" align="center" name="file1" id="file1" >
-	
-	<input type=submit align="center" name="submit1" id="jia" value="上传" onClick="return checkForm(this.form);"/>
-	
-	
-</div>
-<div>
-	
-</div>
-		</form>
-		<!--
-	<form style="padding-left:49%;">
-	  
-		<input type="text" id="login" value="" placeholder="请输入用户名"/>
-		<input type="password" id="" value="" placeholder="请输入密码"/>
-	
-	
-	
+		<div id="J_TabCase">
+			<input type="file" align="center" name="file1" id="file1" >
+			<input type=submit align="center" name="submit1" id="jia" value="上传" onClick="return checkForm(this.form);"/>
+		</div>
 	</form>
-	-->
 	<div align="center">	
-	
-		
-		<!-- 
-		<input type="button" id="showUploaded" value="事项管理"onclick="show();">
-		 -->
 		<table id="uploaded" name="uploaded" border=1>
 		<tr>
 			<th id="uploadedXh" value="1">序号</td>
@@ -166,15 +139,9 @@
 			<th id="uploadedNo">上传文件列表</td>
 			<th id="lastModifyTime">最新修改时间</td>
 		</tr>
-		<c:forEach item=${name } var="name">
-			<a>${name }</a>
-		</c:forEach>
-		
-		
+		 <a>${name }</a>
 	</table>
 	</div>
-	
-	
-	</body>
+</body>
 
 </html>

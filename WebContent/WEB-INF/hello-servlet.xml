@@ -11,9 +11,6 @@
 	<mvc:annotation-driven />
 	<!-- 只要配置了如上两句话，我们就可以通过注解来配置我们的控制器 -->
 	<!-- helloController示例 ：直接在zttc.itat.controller包下创建HelloController并加上注解就可以了，都不用在通过bean注入类了，直接通过注解注入-->
-	
-	
-	<bean name="/welcome.html" class="zttc.itat.controller.WelcomeController" />
 	<!-- 配置ViewResolver -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 	<!-- 

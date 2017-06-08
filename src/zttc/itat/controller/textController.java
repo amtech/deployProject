@@ -11,6 +11,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -34,6 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.sun.xml.internal.bind.v2.runtime.NameList;
 
+import zttc.itat.tools.fileTools;
+
 
 @Controller
 public class textController {
@@ -41,8 +45,8 @@ public class textController {
 @SuppressWarnings({ "unchecked", "unused" })
 @RequestMapping(value = "/doUpload.do", method = RequestMethod.POST)
 	public String uploadFile(HttpServletRequest request,HttpServletResponse response,ModelMap model){
-		 String filepath ="/usr/local/apache-tomcat-8.5.5/webapps/prototype/";
-	//	 String filepath="E:/tomcat/apache-tomcat-7.0.75/webapps/prototype/";
+	//	 String filepath ="/usr/local/apache-tomcat-8.5.5/webapps/prototype/";
+		 String filepath="E:/tomcat/apache-tomcat-7.0.75/webapps/prototype/";
 	//	String filepath ="/Users/Arthur/Documents/apache-tomcat-9/webapps/";
 		String backfPath="http://123.57.4.104:9998";
 		String message="";
@@ -61,8 +65,8 @@ public class textController {
         Iterator<FileItem> it = fileList.iterator();
         String name = "";
         String extName = "";
-       // String savePath = request.getSession().getServletContext().getRealPath("");
-        String savePath="E:/tomcat/apache-tomcat-7.0.75/webapps";
+        String savePath = request.getSession().getServletContext().getRealPath("");
+     //  String savePath="E:/tomcat/apache-tomcat-7.0.75/webapps";
         int i = 0;
         while (it.hasNext()) {
         	System.out.println(i++);
@@ -80,7 +84,8 @@ public class textController {
 	                       extName = name.substring(name.lastIndexOf("."));
 	                    }
 	                    fileFname=name.substring(name.lastIndexOf("/")+1,name.lastIndexOf(".") );
-	                    savePath = savePath+"/upload/";
+//	                    savePath = savePath+"/upload/";
+	                    savePath =savePath+"/upload/";
 	                    File saveFile = new File(savePath + name);
 	                    try {
 							item.write(saveFile);
@@ -107,6 +112,10 @@ public class textController {
 						} 
 				    }
 				if (extName.equals(".zip")) {
+					File iffile=new File(filepath+fileFname);
+					if(iffile.isDirectory()){
+						fileTools.DeleteFolder(filepath+fileFname);
+					}
 					textController.unZip(savePath + name,filepath);
 				}
 				File filezip=new File(filepath+name);//将解压缩前的解压缩文件地址
@@ -192,41 +201,7 @@ public static void unZip(String zipFilePath, String destDir) {
 }  
 
 
-//@RequestMapping(value = "/showUploaded.do", method = RequestMethod.POST)
-//@ResponseBody
-//	public String ShowUploaded(HttpServletRequest request,
-//			HttpServletResponse response, ModelMap model) throws IOException, ServletException  {
-//	
-//	// File file=new File("/usr/local/apache-tomcat-8.5.5/webapps/uploaded/");
-//	
-//	 ArrayList<String> listFileName = new ArrayList<String>();
-//	 
-//	 getAllFileName("/usr/local/apache-tomcat-8.5.5/webapps/uploaded/",listFileName);
-//	 
-//	 
-//	 String path="http://123.57.4.104:9998";
-//	 List list=new ArrayList();
-//	 String back="";
-//	 
-//	 for(int i=0;i<listFileName.size();i++){
-//		 String back1="";
-//		 int j=listFileName.get(i).indexOf("webapps");
-//		 String str=path+"/"+listFileName.get(i).substring(j+8, listFileName.get(i).length());
-//		 System.out.println(str);
-//		 String str1=str.replace("\\", "/");
-//		 System.out.println(str1);
-//	//	 str.replace("\\", "/");
-//		 list.add(str1);//该list用于返回上传原型页面服务器上的路径
-//		// System.out.println(list.get(i));
-//		 back1="<tr><td>"+i+"</td><td><a href="+str1+">"+str1+"</a><td></tr>";
-//		 back+=back1;
-//		 
-//	 }
-//	
-//	
-//	 return back;
-//	
-//}
+
 @SuppressWarnings({ "unchecked", "unused" })
 @RequestMapping(value = "/showUploaded.do", method = RequestMethod.GET)
 	public String ShowUploaded(HttpServletRequest request,
@@ -234,11 +209,9 @@ public static void unZip(String zipFilePath, String destDir) {
 	 request.setCharacterEncoding("utf-8");
 	 response.setContentType("text/html;   charset=utf-8"); 
 	 ArrayList<String> listFileName = new ArrayList<String>();
-	 
-	 List backlist=getFileName("/usr/local/apache-tomcat-8.5.5/webapps/prototype/");
+	 List backlist=getFileName("E:/tomcat/apache-tomcat-7.0.75/webapps/prototype/");
 	 List<String> filesname=(List<String>) backlist.get(0);
 	 List<File> files=(List<File>) backlist.get(1);
-	 
 	 String path="http://123.57.4.104:9998/prototype";
 	 List list=new ArrayList();
 	 String back="";
@@ -254,117 +227,64 @@ public static void unZip(String zipFilePath, String destDir) {
 		 j=i+1;
 		 back1="<tr><td>"+j+"</td><td><a href="+str1+">"+filesname.get(i)+"</a></td><td>"+lastModifyTime+"</td></tr>";
 		 back+=back1;
-		 namelist.add(back1);
+		 //namelist.add(back1);
 	 }
-
-	 model.addAttribute("name",namelist);
+	 model.addAttribute("name",back);
 	 return "scwj1";
 	
 }
 
-
-
-
-
-public static void getAllFileName(String path,ArrayList<String> fileName)
-{
-    File file = new File(path);
-    File [] files = file.listFiles();
-    for(int i=0;i<files.length;i++){
-    	if(".zip".equals(files[i].getPath().substring(files[i].getPath().lastIndexOf(".")))){
-        	files[i].delete();
-        }
-    	System.out.println(files[i].getPath());
-    }
-    
-    String [] names = file.list();
-    if(names != null)
-    for(int i=0;i<names.length;i++){
-    	
-    	names[i]=path+names[i];
-    }
-    fileName.addAll(Arrays.asList(names));
-    for(File a:files)
-    {
-        if(a.isDirectory())
-        {
-            getAllFileName(a.getAbsolutePath(),fileName);
-        }
-    }
-}
-//public static List<List> getFileName(String path) throws UnsupportedEncodingException
-//{
-//	List backList=new ArrayList();
-//	File file = new File("E:/tomcat/apache-tomcat-7.0.75/webapps/验证");
-//    File[] files=file.listFiles();
-//    String[] fileName = file.list();
-//    List<String> list=new ArrayList<String>();//存放文件夹“验证”下的文件名称
-//    List<File> list1=new ArrayList<File>();//存放文件夹“验证”下的文件
-//    for(int i=0;i<fileName.length;i++){
-//    	list.add(new String(fileName[i].getBytes(),"utf-8"));
-//    	list1.add(files[i]);
-//    }
-//
-//    for(int i=0;i<list.size();i++){
-//    	 if(list1.get(i).isDirectory()){
-//    		 list.remove(list.get(i));
-//    		
-//    	 }
-//    	 if(list.get(i).lastIndexOf(".")<0){
-//    		 list.remove(list.get(i));
-//    	 }
-//    	 if (list.get(i).lastIndexOf(".") >= 0) {
-//            String extName = list.get(i).substring(list.get(i).lastIndexOf("."));
-//          //  System.out.println(extName);
-//            if(".zip".equals(extName)){
-//            	list.remove(list.get(i));
-//            }
-//    		 
-//    	 }
-//    	
-//    	 
-//    }
-//    backList.add(list);
-//    backList.add(list1);
-//   
-//    
-//    return backList;//返回所有文件，去除了文件夹和压缩包,该集合中第一个元素为文件名集合，第二个元素为文件集合
-//}
-
+@SuppressWarnings("unchecked")
 public static List<List> getFileName(String path) throws UnsupportedEncodingException
 {
 	List backList=new ArrayList();
 	File file = new File(path);
     File[] files=file.listFiles();
-    String[] fileName = file.list();
+     String[] fileName = file.list();
     List<String> list=new ArrayList<String>();//存放文件夹“验证”下的文件名称
     List<File> list1=new ArrayList<File>();//存放文件夹“验证”下的文件
     for(int i=0;i<fileName.length;i++){
-    	
-        	list.add(new String(fileName[i].getBytes(),"utf-8"));
+    	try{
+    		list.add(new String(fileName[i].getBytes(),"utf-8"));
     		//list.add(fileName[i]);
         	list1.add(files[i]);
-
-    	
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		break;
+    	}
     }
-   
-    for(int i=0;i<list.size();i++){
-    	 if(!list1.get(i).isDirectory()){
-    		 //System.out.println(list1.get(i));
-    		 list.remove(list.get(i));
-    		 list1.remove(list1.get(i));
-    	    
+    List<String> templist=new ArrayList<String>();//文件名称
+    List<File> templist1=new ArrayList<File>();//文件
+     for(int i=0;i<list.size();i++){
+    	 if(list1.get(i).isDirectory()){
+    		 templist.add(list.get(i));
+    		 templist1.add(list1.get(i));
     	 }
     	 continue;
      }
-    backList.add(list);
-    backList.add(list1);
-   
-    
+    Collections.sort(templist1,new Comparator<File>(){
+    	public int compare(File f1,File f2){
+    		Date d1=new Date(f1.lastModified());
+    		Date d2=new Date(f2.lastModified());
+    		Long l1=d1.getTime();
+    		Long l2=d2.getTime();
+    		if(l1>l2){
+    			return -1;
+    		}if(l1<l2){
+    			return 1;
+    		}else{
+    			return 0;
+    		}
+    	}
+    });
+    List l=new ArrayList();
+    for(int i=0;i<templist1.size();i++){
+    	l.add(templist1.get(i).getName());
+    }
+    backList.add(l);
+    backList.add(templist1);
     return backList;//返回所有文件，去除了文件夹和压缩包,该集合中第一个元素为文件名集合，第二个元素为文件集合
 }
-
-
 
 public ModelAndView getModelAndView(){
 	return new ModelAndView();
@@ -376,9 +296,5 @@ public static String getLastModifyTime(File testfile){
 	String dataTimeStr = fmt.format(lastModified);
 	return dataTimeStr;
 }
-
-
-
-
 
 }
